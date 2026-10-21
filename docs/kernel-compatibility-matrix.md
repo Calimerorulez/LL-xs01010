@@ -84,3 +84,7 @@ The privately inspected PON Ethernet module is ELF32 MIPS big-endian. Its `__ver
 | `dp_register_dev_ext` | `be1c1e13` |
 
 These values describe the module's expected ABI. They have **not** yet been checked against the running kernel's exports or a rebuilt vendor kernel. They are not SDK version numbers. No module binary, EEPROM content, credentials, PON identity or device-specific identifiers are included.
+
+## On-device kernel build artifacts (2026-10-21)
+
+Read-only checks on Linux `4.9.308+` found no `/proc/config.gz`, `/boot/config-4.9.308+`, or `Module.symvers` under the searched `/lib/modules`, `/usr/src`, and `/boot` trees. No `/lib/modules/4.9.308+/build` or `source` path was found. Therefore a matching kernel export CRC manifest is not accessible at those locations on the live device. This does not establish that no build artifacts exist in a separate vendor SDK. The `dp_*` import CRCs extracted from the private PON module remain unverified against independently generated kernel export CRCs.
