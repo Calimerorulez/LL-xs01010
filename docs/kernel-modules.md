@@ -92,3 +92,13 @@ This is **only a sample**, not a complete dependency inventory. Undefined symbol
 Offline `readelf -sW` confirms local functions `dp_register_dev_ext2`, `dp_alloc_port_ext2`, `dp_xmit2` in `gwdpa-dpm.ko`, as well as absolute CRC symbols for these `*2` names. In the same module, `dp_register_dev_ext`, `dp_alloc_port_ext`, `dp_xmit`, and `dp_*_fn` names appeared as GLOBAL UND (unresolved) symbols. This means `gwdpa-dpm.ko` does **not** itself define the original un-suffixed symbols observed in the sample, notwithstanding its local `*2` implementations. This may involve an abstraction/dispatch layer; symbol ownership and runtime call direction are not confirmed.
 
 Next: inspect exported symbols using `readelf -sW` and `__ksymtab`/`__kstrtab` metadata across the private module collection, and check whether platform kernel built-ins provide the unsuffixed functions. Do not publish binary objects.
+
+## Live kallsyms observation (2026-10-21)
+
+The live PRX126 device shows the following `T` (text symbol) entries in `/proc/kallsyms`:
+
+- `dp_alloc_port_ext`
+- `dp_register_dev_ext`
+- `dp_xmit`
+
+The kernel addresses are intentionally omitted. This confirms that all three symbol names are present in the running kernel symbol namespace. **It does not establish whether the symbols come from vmlinux or a loaded module**, nor prove their export status or ABI compatibility. Follow-up: inspect complete kallsyms lines and the relevant exporting module or built-in symbol tables.
