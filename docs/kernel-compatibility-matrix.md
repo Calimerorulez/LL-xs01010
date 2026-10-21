@@ -108,3 +108,15 @@ Additional expected callback-pointer symbol CRCs found in `gwdpa-dpm.ko`: `dp_re
 ## QoS module artifact located (2026-10-21)
 
 The LL-XS1010's `/lib/modules/4.9.308+/` directory contains `qos_tc.ko` (151904 bytes), `mod_pon_eth.ko` (81148 bytes), `gwdpa-dpm.ko` (841084 bytes), and `mod_pon_mbox.ko` (187152 bytes). Live module listing previously confirmed that `qos_tc` is used by `mod_pon_eth` and `dp_eth_reinsert`. `modinfo qos_tc` reports GPL and an empty direct `depends` list. The file is now available for private offline comparison of its imported symbol CRCs with the two modules already inspected. No module binaries or device-specific data are included.
+
+## Shared module ABI check — 21 October 2026
+
+Offline comparison of the module-version symbol records in three locally retained kernel modules yielded:
+
+| Compared modules | Shared imported symbol names | Matching expected CRCs | Differences |
+| --- | ---: | ---: | ---: |
+| `mod_pon_eth.ko` / `gwdpa-dpm.ko` | 26 | 26 | 0 |
+| `mod_pon_eth.ko` / `qos_tc.ko` | 20 | 20 | 0 |
+| `gwdpa-dpm.ko` / `qos_tc.ko` | 45 | 45 | 0 |
+
+Fifteen imported symbol names occur in all three modules. The 91 pairwise matches must not be interpreted as 91 distinct symbols. All shared imported symbols examined have consistent expected CRCs across the modules. This does not independently verify the running kernel's exported CRCs or establish Linux 5.15 compatibility. No binary modules or device-specific identifying data were committed.
