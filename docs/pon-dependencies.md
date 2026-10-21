@@ -33,3 +33,30 @@ These roles are inferred from process arguments and executable names; exact impl
 ## Confidentiality
 
 Only filenames, generic versions, and ABI/dependency metadata should be committed. Keep copied executable files private and out of Git.
+
+
+## Confirmed runtime linkage (`ldd`, 2026-10-21)
+
+All three executables resolve against the musl MIPS soft-float loader `/lib/ld-musl-mips-sf.so.1`. This is runtime linkage observed on the original device, not a portability test.
+
+| Library | omcid | sfp_i2c | todd |
+| --- | :---: | :---: | :---: |
+| libcli.so.1 | yes | | |
+| libuci.so | yes | | |
+| libubus.so.20210603 | yes | | |
+| libcrypto.so.1.1 | yes | | |
+| libifxos.so.0 | yes | yes | |
+| libadapter.so.0 | yes | | |
+| libsafec-3.3.so.3 | yes | yes | yes |
+| libargp-shared.so.0 | yes | | yes |
+| libgcc_s.so.1 | yes | yes | yes |
+| libubox.so | yes | | |
+| libc.so (musl loader) | yes | yes | yes |
+
+Notable compatibility constraints:
+- `omcid` requires `libcrypto.so.1.1` (OpenSSL 1.1 ABI); do not substitute OpenSSL 3 via symlinks.
+- `omcid` requires `libubus.so.20210603`; compatibility with newer OpenWrt ABI is not verified.
+- `libadapter.so.0` and `libifxos.so.0` require separate dependency and kernel-interface analysis.
+- `ldd` resolution on the original system does **not** establish compatibility with newer userspace or kernel.
+
+Runtime load addresses and other device-specific context have been excluded.
