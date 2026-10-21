@@ -83,3 +83,25 @@ Additional top-level I2C, GPIO, SPI, PCIe and XPCS nodes were seen. These are *n
 **Security:** public documentation intentionally excludes the EEPROM contents, MAC addresses, identifiers, calibration values and unique device properties. No binary device-tree dump is published.
 
 Next safe read-only phase: extract `compatible` and `status` strings only from a short allowlist of PON, SFP, NAND, Ethernet and reserved-memory nodes, rather than walking or dumping all properties.
+
+
+## Verified device-tree binding strings (2026-10-21)
+
+The LL-XS1010 read-only `compatible` / `status` inspection yielded:
+
+| Active device-tree node | `compatible` | `status` | Source mapping |
+| --- | --- | --- | --- |
+| `pon_ethernet@2` | `intel,prx300-pon` | `okay` | Matching modern source/driver **not yet found** |
+| `ponmbox@100000` | `intel,prx300-pon-mbox` | `okay` | Matching modern source/driver **not yet found** |
+| `sfp_i2c@0x50000` | `intel,pon-sfp-i2c` | `okay` | Matching modern source/driver **not yet found** |
+| `gswitch@400000` | `intel,gswdev` | No status property | **Exact compatible match** in public MaxLinear driver |
+| `ltq-spinand@0` | `lantiq,spinand` | `okay` | Matching modern source/driver **not yet found** |
+| `wan_xpcs@18C42000` | `intel,xpcs` | `disabled` | Do **not** assume active WAN XPCS path |
+
+In the public `maxlinear/linux` `updk_9.1.90` branch, [`drivers/net/datapath/gswip/gswip_dev/gsw_dev.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/gswip/gswip_dev/gsw_dev.c) has an OF match table with the **exact** `intel,gswdev` string. That is confirmed source-level driver binding evidence, not proof the specific older binary is ABI-compatible with Linux 5.15.
+
+Targeted searches in the same public branch returned **no indexed matches** for `intel,prx300-pon`, `intel,prx300-pon-mbox`, `intel,pon-sfp-i2c`, `lantiq,spinand` and `intel,xpcs`. A missing search hit is *not* proof a driver does not exist under another binding/repository; the three active PON-related strings remain unresolved and high priority.
+
+`status` not specified on `gswitch` is consistent with standard DT semantics (normally available unless disabled); it is not an explicit `okay` result. Conversely, `wan_xpcs` is explicitly disabled and must not be treated as the currently active optical path merely because the node exists.
+
+**Next safe step:** read only the non-secret `compatible` and `status` properties on subnodes under `gswitch`, `pon_ethernet`, `sfp_i2c` and selected pinctrl groups; map exact strings to sources. Never read EEPROM cell payloads, calibration or identity fields.
