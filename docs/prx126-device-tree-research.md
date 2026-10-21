@@ -45,3 +45,11 @@ The official [`maxlinear/feed_pon` script `disable_dying_gasp`](https://github.c
 If the full textual DTS cannot be found publicly, collect only a *privately retained* snapshot of the running device-tree directory or an appropriate boot DTB for **offline analysis**. Publicly publish only redacted node names, compatible strings and generic structural findings. Avoid copying unique MAC addresses, calibration cells, PON credentials, EEPROM contents or full binary dumps to GitHub.
 
 No changes to the LL-XS1010 are required for this research.
+
+## Running device tree root inventory (2026-10-21)
+
+Read-only `/proc/device-tree` root listing showed these notable top-level nodes: `combophy@0`, `cpus`, `i2c-gpio`, `memory@0`, `opp_table`, `pcie@1a400000`, `pcie@1a900000`, `pinselect-1pps`, `pinselect-ntr`, `pinselect-rx-los`, `reserved-memory`, `ssx0@14000000`, `ssx1_0@12000000`, `ssx1_1@18000000`, `ssx1_2@1A000000`, `ssx1_3@1E000000`, `ssx4@16000000`, `ssx7@a0000000`, `thermal-zones`, and `wan_xpcs@18C42000`.
+
+Root compatible strings in order: `intel,prx126-sfp-pon`, `intel,prx126-sfp-eva-pon`, `intel,prx126`, `intel,prx300`.
+
+A `find /proc/device-tree -type d` pipeline with a hardware-node filter returned no results. This is an enumeration limitation or command behavior to investigate; no conclusion should be drawn that nested nodes are absent. The top-level names do **not** yet establish pin assignments, clock/interrupt mappings, full PHY wiring or compatibility with another SFP board. No unique identifiers have been included.
