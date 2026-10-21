@@ -44,3 +44,29 @@ Dependency spelling is retained as reported by `modinfo`; dashes and underscores
 - Compare against published vendor source/SDK only with verified matching board and build references.
 
 Never upload binaries, complete kernel command lines, calibration data or device-specific identifiers.
+
+
+## Installed loadable module files (2026-10-21)
+
+The following individual `.ko` files were confirmed in `/lib/modules/4.9.308+/` using read-only `find`, `ls` and `modinfo`:
+
+| File | Reported size (ls -lh) |
+| --- | ---: |
+| `gwdpa-dpm.ko` | 821.4 KiB |
+| `ltq_eth_drv_xrx500.ko` | 56.4 KiB |
+| `mod_pon_eth.ko` | 79.2 KiB |
+| `mod_pon_mbox.ko` | 182.8 KiB |
+| `mod_pon_mcc.ko` | 24.2 KiB |
+| `mod_pon_mcc_chk.ko` | 11.1 KiB |
+| `mod_pon_ptp.ko` | 8.3 KiB |
+| `mod_sfp_i2c.ko` | 46.2 KiB |
+| `qos_tc.ko` | 148.3 KiB |
+| `xrx500_phy_fw.ko` | 16.1 KiB |
+
+Also present: `dp_oam.ko` (32.6 KiB), `dp_eth_reinsert.ko` (8.1 KiB), `mcast_bridge_filter.ko` (5.5 KiB), `pp_net_adapter.ko` (2.2 KiB), and various generic Linux networking modules.
+
+`modinfo mod_pon_eth` resolved `/lib/modules/4.9.308+/mod_pon_eth.ko` and showed `license: GPL`, `depends: mod_pon_mbox,qos_tc,gwdpa-dpm`. `modinfo gwdpa_dpm` resolved `gwdpa-dpm.ko`, showing `license: GPL`, no listed dependencies. Neither printed a `vermagic` field on device.
+
+**Interpretation:** Vendor PON/datapath components are supplied as discrete kernel module binaries, not solely statically compiled into the kernel. These binaries remain tied to an as-yet-unverified kernel ABI; their mere availability does not permit loading them under another kernel.
+
+Next: inspect only read-only `modinfo -F vermagic` and, on a trusted offline analysis host if necessary, `readelf -p .modinfo` on a **privately retained copy** of a module. Do not commit binaries or full dumps to public GitHub.
