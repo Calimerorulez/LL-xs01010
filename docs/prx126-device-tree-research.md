@@ -191,3 +191,22 @@ Read-only `compatible` / `status` inspection confirms:
 The exact `intel,prx300-pon-ptp` match is found in publicly available first-party [MaxLinear `pon_mbox_drv/ptp/pon_ptp.c`](https://github.com/maxlinear/pon_mbox_drv/blob/master/ptp/pon_ptp.c). The three `gsw_mac` nodes and the two PON PTP nodes are separate nodes; no claim is made that all are physically used at once. Pinctrl child groups generally need no standalone `compatible` declaration. An `okay` status permits probing but does not establish successful driver binding.
 
 Next step: inspect read-only `/sys/bus/platform/devices/*/driver` symlinks for selected nodes and only the structural `compatible`/`status` of the pinctrl controller. No EEPROM data, firmware or calibration should be read or published.
+
+## Verified live platform-driver bindings (2026-10-21)
+
+The running LL-XS1010's read-only `/sys/bus/platform/devices/*/driver` inspection confirms all twelve observed compatible-selected platform devices have a driver symlink:
+
+| Device | Compatible | Bound driver |
+| --- | --- | --- |
+| `14050000.sfp_i2c` | `intel,pon-sfp-i2c` | `pon-sfp-i2c` |
+| `18000000.pon_ptp`, `18000001.pon_ptp` | `intel,prx300-pon-ptp` | `pon_ptp_drv` |
+| `18000002.pon_ethernet` | `intel,prx300-pon` | `prx300-pon` |
+| `18100000.ponmbox` | `intel,prx300-pon-mbox` | `pon_mbox` |
+| `18400000.gswitch` | `intel,gswdev` | `gswdev` |
+| `18700000.eip160`, `18720000.eip160` | `intel,gsw_macsec` | `gsw_macsec` |
+| `gsw_core.3.auto` | `intel,gsw_core` | `gsw_core` |
+| `gsw_mac.0.auto`, `.1.auto`, `.2.auto` | `intel,gsw_mac` | `gsw_mac` |
+
+This adds two **MACsec/EIP160** platformdevices to the driver inventory. Driver symlinks establish successful binding, but are not end-to-end proof of optical link function, packet flow, MACsec usage or a compatible newer-kernel implementation.
+
+Safe next inspection: check the publicly available MaxLinear kernel source for exact `intel,gsw_macsec`, `intel,gsw_core` and `intel,gsw_mac` bindings; then review the matching module ownership without dumping sensitive configuration.
