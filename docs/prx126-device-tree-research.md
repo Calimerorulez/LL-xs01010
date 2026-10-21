@@ -173,3 +173,21 @@ Further searches for literal `prx126-sfp-pon.dts`, `prx300.dtsi` and `prx126-sfp
 To reconstruct only the **non-sensitive driver-binding map** from the running system, first read solely `compatible` and `status` properties for an explicit allowlist of PON Ethernet, mailbox, PTP, SFP-I2C, switch-core/MAC and PON pinctrl nodes. Do not recursively print all properties or publish a raw DTB: the tree contains EEPROM nodes and may contain device identifiers, calibration or other sensitive fields.
 
 Next correlate each compatible string to the already located MaxLinear PON mailbox/Ethernet and switch source. Afterward, inspect only necessary structural properties, avoiding identity and calibration data. A source-level DTS reconstruction must remain labeled partial until clocks, interrupts, GPIOs, memory reservations and pinmux are validated.
+
+## PON PTP, switch MAC and pinctrl compatibility inventory (2026-10-21)
+
+Read-only `compatible` / `status` inspection confirms:
+
+| Node | compatible | status |
+| --- | --- | --- |
+| `pon_ethernet@2` | `intel,prx300-pon` | `okay` |
+| `ponmbox@100000` | `intel,prx300-pon-mbox` | `okay` |
+| `pon_ptp@0` and `pon_ptp@1` | `intel,prx300-pon-ptp` | `okay` |
+| `sfp_i2c@0x50000` | `intel,pon-sfp-i2c` | `okay` |
+| `gsw_core@0` | `intel,gsw_core` | status absent |
+| `gsw_mac@0`, `@1`, `@2` | `intel,gsw_mac` | `okay` |
+| pinctrl `pon_ip` and `pon_ip_sfp_tx_dis` | compatible absent | status absent |
+
+The exact `intel,prx300-pon-ptp` match is found in publicly available first-party [MaxLinear `pon_mbox_drv/ptp/pon_ptp.c`](https://github.com/maxlinear/pon_mbox_drv/blob/master/ptp/pon_ptp.c). The three `gsw_mac` nodes and the two PON PTP nodes are separate nodes; no claim is made that all are physically used at once. Pinctrl child groups generally need no standalone `compatible` declaration. An `okay` status permits probing but does not establish successful driver binding.
+
+Next step: inspect read-only `/sys/bus/platform/devices/*/driver` symlinks for selected nodes and only the structural `compatible`/`status` of the pinctrl controller. No EEPROM data, firmware or calibration should be read or published.
