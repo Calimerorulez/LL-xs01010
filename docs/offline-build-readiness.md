@@ -59,3 +59,11 @@ Once a validated MIPS kernel config, cross compiler and `Module.symvers` exist, 
 ## Publication boundary
 
 Do not publish private module binaries, full DTB images, EEPROM content, LOID/PON serial, unique MAC addresses, calibration, credentials, full bootloader environment or complete raw firmware dumps.
+
+## Build-host architecture gate results (2026-10-21)
+
+The Debian LXC checkout of public `maxlinear/linux` `updk_9.1.90` reports Linux `5.15.180`. A name-based search of `arch/mips/configs` found no PRX300/Lantiq/Intel/MXL defconfig. A limited grep for `config PRX300_CQM`, `config SOC_PRX300`, or `config MACH_PRX300` under `arch/mips` and `drivers/net/datapath` returned no matching file. These negative results are scoped to the commands run; they do not prove the platform is absent from every repository or branch.
+
+**New historical source lead:** [`paldier/linux`, branch `intel-4.9.206`](https://github.com/paldier/linux/blob/intel-4.9.206/Makefile), reports Linux `4.9.206` and explicitly declares `config PRX300_CQM` under [`drivers/net/ethernet/lantiq/cqm/Kconfig`](https://github.com/paldier/linux/blob/intel-4.9.206/drivers/net/ethernet/lantiq/cqm/Kconfig), dependent on `LTQ_CBM` and `SOC_GRX500`. This is closer to the LL-XS1010 kernel family, but still older than `4.9.308+` and not established as its matching SDK. It does **not** establish Linux 5.15 PRX126 support.
+
+Recommended next investigation, without device access: scan both checked-out 5.15 source and the historical 4.9.206 kernel tree for actual SoC Kconfig/Makefiles, available MIPS defconfig names and DTS files. Continue to avoid builds until an appropriate target/toolchain is confirmed.
