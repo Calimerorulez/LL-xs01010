@@ -165,3 +165,11 @@ A potentially valuable source-access lead is the prpl Foundation's [MaxLinear pl
 The publicly indexed [`paldier/feed_target_mips` `image/prx300.mk`](https://github.com/paldier/feed_target_mips/blob/ugw-8.4.1-cleanup/image/prx300.mk) confirms `DEVICE_DTS := prx126-sfp-pon`, but searches did not locate the source `.dts`. This is evidence of a named target, not evidence that all required device-tree sources are public.
 
 **Practical next action:** request from MaxLinear or the module supplier the exact matching PRX126-SFP-PON DTS/DTSI sources, `pon_sfp_i2c` v1.2.1 source package, associated ACA firmware provenance and kernel/toolchain support matrix. Independently reconstructed DT data from the running device must be reviewed and stripped of identity/EEPROM/calibration information before any public release.
+
+## Controlled device-tree reconstruction plan (2026-10-21)
+
+Further searches for literal `prx126-sfp-pon.dts`, `prx300.dtsi` and `prx126-sfp-eva-pon` yielded no verified complete board DTS. The historical target declaration is still the strongest exact-name evidence, but a complete board source has not been established.
+
+To reconstruct only the **non-sensitive driver-binding map** from the running system, first read solely `compatible` and `status` properties for an explicit allowlist of PON Ethernet, mailbox, PTP, SFP-I2C, switch-core/MAC and PON pinctrl nodes. Do not recursively print all properties or publish a raw DTB: the tree contains EEPROM nodes and may contain device identifiers, calibration or other sensitive fields.
+
+Next correlate each compatible string to the already located MaxLinear PON mailbox/Ethernet and switch source. Afterward, inspect only necessary structural properties, avoiding identity and calibration data. A source-level DTS reconstruction must remain labeled partial until clocks, interrupts, GPIOs, memory reservations and pinmux are validated.
