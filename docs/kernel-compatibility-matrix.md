@@ -88,3 +88,15 @@ These values describe the module's expected ABI. They have **not** yet been chec
 ## On-device kernel build artifacts (2026-10-21)
 
 Read-only checks on Linux `4.9.308+` found no `/proc/config.gz`, `/boot/config-4.9.308+`, or `Module.symvers` under the searched `/lib/modules`, `/usr/src`, and `/boot` trees. No `/lib/modules/4.9.308+/build` or `source` path was found. Therefore a matching kernel export CRC manifest is not accessible at those locations on the live device. This does not establish that no build artifacts exist in a separate vendor SDK. The `dp_*` import CRCs extracted from the private PON module remain unverified against independently generated kernel export CRCs.
+
+## Cross-module modversion comparison (2026-10-21)
+
+Private read-only analysis of `mod_pon_eth.ko` and `gwdpa-dpm.ko` found matching expected CRC values for three imported kernel datapath interfaces:
+
+| Imported interface | PON Ethernet expected CRC | GWDPA expected CRC |
+| --- | --- | --- |
+| `dp_xmit` | `0x5c4bb9fc` | `0x5c4bb9fc` |
+| `dp_alloc_port_ext` | `0x5dcfd275` | `0x5dcfd275` |
+| `dp_register_dev_ext` | `0xbe1c1e13` | `0xbe1c1e13` |
+
+Additional expected callback-pointer symbol CRCs found in `gwdpa-dpm.ko`: `dp_register_dev_ext_fn = 0xae16ac03`, `dp_alloc_port_ext_fn = 0x76f220b5`, `dp_xmit_fn = 0x7fe00d81`. These confirm agreement *between the two modules* for the shared imported interfaces, not an independently measured built-in kernel CRC, complete ABI equivalence, or identification of the vendor SDK release. No proprietary binaries, unique identifiers, or unfiltered logs are included.
