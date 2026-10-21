@@ -49,3 +49,29 @@ This is concrete evidence that **nominally related PRX126 devices can use differ
 ## Conclusion
 
 Strong public evidence of historical PRX300 kernel/datapath patch availability. No verified full LL-XS1010 SDK, no verified matching `dp_*` source location, and no basis for a safe cross-device firmware flash.
+
+
+## Confirmed implementation discovered in MaxLinear's own public Linux tree (2026-10-21)
+
+**Major finding:** the publicly readable [`maxlinear/linux` repository](https://github.com/maxlinear/linux), default branch `updk_9.1.90`, has the *actual definitions* of all three APIs originally observed as unresolved references in LL-XS1010 modules:
+
+- [`drivers/net/datapath/dpm/datapath_api_fn.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/dpm/datapath_api_fn.c): `dp_alloc_port_ext`, `dp_register_dev_ext`, `dp_xmit` are each defined and exported with `EXPORT_SYMBOL`.
+- [`include/net/datapath_api_fn.h`](https://github.com/maxlinear/linux/blob/updk_9.1.90/include/net/datapath_api_fn.h): declares `dp_alloc_port_ext_fn`, `dp_register_dev_ext_fn`, `dp_xmit_fn` as function pointers.
+- [`include/net/datapath_api.h`](https://github.com/maxlinear/linux/blob/updk_9.1.90/include/net/datapath_api.h): public function declarations / datapath API types.
+
+The functions in the newer tree are wrappers: they dispatch through matching `*_fn` function pointers if installed. The `dp_xmit` wrapper releases the packet buffer and returns `DP_FAILURE` if no handler is registered. This is **direct source confirmation of the API/dispatch design** hypothesized from the LL-XS1010's ELF undefined symbols and the local `*2` implementations in `gwdpa-dpm.ko`.
+
+**Compatibility limit:** the MaxLinear default-branch [kernel Makefile](https://github.com/maxlinear/linux/blob/updk_9.1.90/Makefile) identifies **Linux 5.15.180**, whereas the LL-XS1010 is running **Linux 4.9.308+**. The source confirms shared design and naming; it does *not* establish the same ABI, matching patches, PRX126 board support, compatible PON drivers, or a safe upgrade path.
+
+### Refined research question
+
+The next meaningful comparison is no longer simply whether `dp_*` exists. It is whether the `struct dp_*` layouts, exported-symbol CRCs, dispatcher registration, PON mailbox firmware, and PRX126 board hardware configuration match or can be rebuilt for a newer SDK. Function names alone are insufficient.
+
+### Candidate follow-up source checks
+
+1. Check exact `maxlinear/linux` branch support for PRX300/PRX126 device trees and whether the LL-XS1010 board identifier occurs.
+2. Search `datapath_api_fn.c` and related DPM source for assignment of the `*_fn` hooks; compare with local `gwdpa-dpm` symbol findings.
+3. Look for other public MaxLinear branches closer to `4.9.308+` and document kernel baseline.
+4. Keep firmware-bank, image format, chip and board differences in scope; do not flash vendor binaries from other products.
+
+This note contains only upstream source references, generic versions and sanitized symbol names.
