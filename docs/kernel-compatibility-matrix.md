@@ -63,3 +63,12 @@ Direct dependencies are not a complete functional or runtime dependency graph. T
 A filtered `strings` check of installed `mod_pon_eth`, `mod_pon_mbox`, `mod_pon_ptp`, `mod_sfp_i2c`, and `gwdpa-dpm` kernel modules found no literal driver or package version values. The sole match was a runtime formatting string in `mod_pon_mbox`: `pon_mbox: FW version: %d.%d.%d.%d.%d-%d` (with a leading kernel logging-format byte). This formatting string does not identify the module revision. Earlier boot logging reported PON firmware `3.21.0.3.16-1674463172`; it is a firmware component version, not a confirmed SDK or module source revision.
 
 Next use the private offline ELF module copies to inspect `.modinfo` fields (`srcversion`, `vermagic`, dependencies), build-id if present, and optional version control metadata, publishing only non-sensitive derived results. Avoid posting complete ELF strings or raw module objects.
+
+## Offline ELF metadata checks (2026-10-21)
+
+GNU `readelf` run privately on two modules reported the following `.modinfo` contents:
+
+- `mod_pon_eth.ko`: `license=GPL`; `depends=mod_pon_mbox,qos_tc,gwdpa-dpm`.
+- `gwdpa-dpm.ko`: `license=GPL`; `parmtype=dp_dbg:charp`; empty `depends=`.
+
+The accompanying readelf note query yielded no `Build ID`/`NT_GNU_BUILD_ID` output for either module. Neither inspected `.modinfo` section contains `vermagic` or `srcversion`. The prior `__versions` section finding in `mod_pon_eth.ko` remains relevant to kernel symbol CRC compatibility but does not uniquely identify a MaxLinear SDK release. No ELF binaries or private strings were published.
