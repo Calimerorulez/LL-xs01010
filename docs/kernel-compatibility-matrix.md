@@ -57,3 +57,9 @@ A read-only `opkg list-installed | grep -Ei 'pon|sfp|datapath|qos|switch|gsw'` r
 | `gwdpa-dpm` | GPL | none listed |
 
 Direct dependencies are not a complete functional or runtime dependency graph. These commands did not reveal specific installed driver or MaxLinear SDK release versions. Next consider **only non-sensitive** build metadata (module `srcversion`/`.modinfo` if present, public package recipe correspondence), without dumping EEPROM, firmware blobs, PON identity or unredacted build-path credentials.
+
+## Focused embedded version-string inspection (2026-10-21)
+
+A filtered `strings` check of installed `mod_pon_eth`, `mod_pon_mbox`, `mod_pon_ptp`, `mod_sfp_i2c`, and `gwdpa-dpm` kernel modules found no literal driver or package version values. The sole match was a runtime formatting string in `mod_pon_mbox`: `pon_mbox: FW version: %d.%d.%d.%d.%d-%d` (with a leading kernel logging-format byte). This formatting string does not identify the module revision. Earlier boot logging reported PON firmware `3.21.0.3.16-1674463172`; it is a firmware component version, not a confirmed SDK or module source revision.
+
+Next use the private offline ELF module copies to inspect `.modinfo` fields (`srcversion`, `vermagic`, dependencies), build-id if present, and optional version control metadata, publishing only non-sensitive derived results. Avoid posting complete ELF strings or raw module objects.
