@@ -81,3 +81,11 @@ Next verify whether a separate UGW `feed_target_mips` or patches adds the PRX126
 On the Debian research host, `paldier/feed_target_mips` branch `ugw-8.4.1-cleanup` was checked for filenames containing PRX126, PRX300 or SFP-PON. The only matching files were `image/prx300.mk` and `image/fakeroot-prx300.conf`. Recursive content search located `DEVICE_DTS := prx126-sfp-eva-pon` at `image/prx300.mk:91` and `DEVICE_DTS := prx126-sfp-pon` at `image/prx300.mk:106`. **No matching DTS source was found in this target-feed checkout.** This indicates the feed contains image build targets but does not itself supply the required board tree. Whether a separate kernel patch set or another vendor source repository provides the DTS remains open.
 
 Next trace the UGW build include chain to determine the expected location of `DEVICE_DTS` source and inspect the available kernel patch series for DTS additions. Keep any reconstructed live DTB private.
+
+## Historical source grep and target-feed patches (2026-10-21)
+
+Debian source checks returned zero matches for the literal `prx126` in the historical `intel-linux-4.9` checkout. Within `arch/mips/boot/dts` and `arch/mips/lantiq`, `prx300` references were present in `arch/mips/lantiq/Kconfig`, GRX500 PROM implementation and PRX300 bootcore clock/early console/system control files. This is consistent with reuse of GRX500 platform facilities; the exact LL-XS1010 mainline board integration remains unverified.
+
+**Correction to prior inference:** the historical `feed_target_mips` checkout **does** contain a `patches-4.9/` kernel patch directory. Earlier searches restricted to filenames with `prx126`/`prx300` did not expose this broader patch set. Sample patch names concern legacy Lantiq/Falcon SPI, GPIO, NAND, XRX200, generic kernel and SDK compatibility. No exact PRX126 DTS content has been established from these patch filenames.
+
+Next run a content-level `git grep` over `feed_target_mips/patches-4.9` for exact PRX126 names, `intel,prx126`, `intel,prx300-pon`, `prx300` and `arch/mips/boot/dts` additions. Examine actual matches before claiming the DTS exists. Compare independently with the larger historical UGW patch tree. No flashing or live-device changes.
