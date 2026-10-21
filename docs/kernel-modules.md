@@ -86,3 +86,9 @@ A follow-up read-only test established:
 The first 50 alphabetically sorted undefined ELF symbol names were inspected locally with GNU readelf. Notable vendor datapath API references include `dp_alloc_port_ext`, `dp_register_dev_ext`, `dp_register_subif_ext`, `dp_get_netif_subifid`, `dp_rx_enable`, `dp_xmit`, `dp_set_pmapper`, and `dp_pmac_set`. Other references include `gem_port_id_remove_update`, `gem_port_id_write_update`, `gsw_get_swcore_ops`, and standard Linux netdevice/ethtool symbols.
 
 This is **only a sample**, not a complete dependency inventory. Undefined symbols may be provided by the main kernel or other modules. Export ownership and CRC compatibility have not been established. The vendor-specific datapath API is a key obstacle to assuming drop-in compatibility with an upstream newer kernel. No binaries or device identifiers were published.
+
+## gwdpa-dpm symbol inspection (2026-10-21)
+
+Offline `readelf -sW` confirms local functions `dp_register_dev_ext2`, `dp_alloc_port_ext2`, `dp_xmit2` in `gwdpa-dpm.ko`, as well as absolute CRC symbols for these `*2` names. In the same module, `dp_register_dev_ext`, `dp_alloc_port_ext`, `dp_xmit`, and `dp_*_fn` names appeared as GLOBAL UND (unresolved) symbols. This means `gwdpa-dpm.ko` does **not** itself define the original un-suffixed symbols observed in the sample, notwithstanding its local `*2` implementations. This may involve an abstraction/dispatch layer; symbol ownership and runtime call direction are not confirmed.
+
+Next: inspect exported symbols using `readelf -sW` and `__ksymtab`/`__kstrtab` metadata across the private module collection, and check whether platform kernel built-ins provide the unsuffixed functions. Do not publish binary objects.
