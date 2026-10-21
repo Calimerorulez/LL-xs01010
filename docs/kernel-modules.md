@@ -102,3 +102,9 @@ The live PRX126 device shows the following `T` (text symbol) entries in `/proc/k
 - `dp_xmit`
 
 The kernel addresses are intentionally omitted. This confirms that all three symbol names are present in the running kernel symbol namespace. **It does not establish whether the symbols come from vmlinux or a loaded module**, nor prove their export status or ABI compatibility. Follow-up: inspect complete kallsyms lines and the relevant exporting module or built-in symbol tables.
+
+## Built-in datapath follow-up (2026-10-21)
+
+A read-only kernel symbol lookup shows `dp_alloc_port_ext`, `dp_register_dev_ext`, and `dp_xmit` as global text symbols (`T`), as well as `dp_init` as a local text symbol (`t`). None of those symbol lines displayed a loaded-module suffix. This supports, but does not fully prove, that the datapath API and initializer are compiled into the vendor kernel. `/sys/module` separately lists loaded PON/datapath modules, including `gwdpa_dpm`, `mod_pon_eth`, `mod_pon_mbox`, `mod_pon_mcc`, `mod_pon_ptp`, `dp_oam`, `dp_eth_reinsert`, `pp_net_adapter`, and `qos_tc`.
+
+Neither `/proc/config.gz` nor `/boot/config-*` yielded a kernel configuration file in the supplied check. Exact kernel build settings remain unknown. Next investigate appropriate public MaxLinear kernel sources and SDK matches before making claims about kernel portability. No kernel memory addresses, module binaries, identifiers or secrets are included here.
