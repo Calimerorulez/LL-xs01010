@@ -70,3 +70,13 @@ Also present: `dp_oam.ko` (32.6 KiB), `dp_eth_reinsert.ko` (8.1 KiB), `mcast_bri
 **Interpretation:** Vendor PON/datapath components are supplied as discrete kernel module binaries, not solely statically compiled into the kernel. These binaries remain tied to an as-yet-unverified kernel ABI; their mere availability does not permit loading them under another kernel.
 
 Next: inspect only read-only `modinfo -F vermagic` and, on a trusted offline analysis host if necessary, `readelf -p .modinfo` on a **privately retained copy** of a module. Do not commit binaries or full dumps to public GitHub.
+
+
+## Metadata inspection limitations (2026-10-21)
+
+A follow-up read-only test established:
+
+- On-device `modinfo -F vermagic <module>` prints `Usage: modinfo module`: this `modinfo` implementation **does not support** the `-F` option. No vermagic conclusion can be drawn from this test.
+- Confirmed module paths include `mod_pon_eth.ko`, `mod_pon_mbox.ko`, `qos_tc.ko`. Vendor datapath module filename is `gwdpa-dpm.ko`, not `gwdpa_dpm.ko`.
+- Attempt to read `/proc/config.gz` using `zcat` and grep yielded no output; the pipeline suppressed errors. It is not known whether the config file was present. `CONFIG_MODVERSIONS` remains unknown.
+- Next recommended action: copy selected modules **privately** to an analysis machine and use a full host `readelf` to inspect `.modinfo`, `__versions`, ELF headers and undefined symbols. Do not commit binaries or unredacted extracts to public GitHub.
