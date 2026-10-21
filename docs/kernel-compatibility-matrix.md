@@ -72,3 +72,15 @@ GNU `readelf` run privately on two modules reported the following `.modinfo` con
 - `gwdpa-dpm.ko`: `license=GPL`; `parmtype=dp_dbg:charp`; empty `depends=`.
 
 The accompanying readelf note query yielded no `Build ID`/`NT_GNU_BUILD_ID` output for either module. Neither inspected `.modinfo` section contains `vermagic` or `srcversion`. The prior `__versions` section finding in `mod_pon_eth.ko` remains relevant to kernel symbol CRC compatibility but does not uniquely identify a MaxLinear SDK release. No ELF binaries or private strings were published.
+
+## Offline ABI comparison checkpoint (2026-10-21)
+
+The privately inspected PON Ethernet module is ELF32 MIPS big-endian. Its `__versions` section contains 88 fixed-size records (64 bytes each). The extracted version identifiers for the imported datapath functions are:
+
+| Interface | Module-expected CRC |
+| --- | --- |
+| `dp_xmit` | `5c4bb9fc` |
+| `dp_alloc_port_ext` | `5dcfd275` |
+| `dp_register_dev_ext` | `be1c1e13` |
+
+These values describe the module's expected ABI. They have **not** yet been checked against the running kernel's exports or a rebuilt vendor kernel. They are not SDK version numbers. No module binary, EEPROM content, credentials, PON identity or device-specific identifiers are included.
