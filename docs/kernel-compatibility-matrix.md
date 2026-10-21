@@ -104,3 +104,7 @@ Additional expected callback-pointer symbol CRCs found in `gwdpa-dpm.ko`: `dp_re
 ## Runtime module relationship check (2026-10-21)
 
 `/proc/modules` shows `mod_pon_eth` loaded; `qos_tc` loaded and used by `mod_pon_eth` and `dp_eth_reinsert`; `gwdpa_dpm` loaded and used by `mod_pon_eth` and `mod_pon_mcc`. The live module name uses underscore `gwdpa_dpm`, whereas the local ELF filename uses hyphen `gwdpa-dpm.ko`. The preceding offline comparison reported 26 shared imported symbols between PON Ethernet and GWDPA, all with matching expected CRCs and zero differences. This is shared-import consistency, not proof of the running kernel export CRCs. No module files or runtime addresses are included.
+
+## QoS module artifact located (2026-10-21)
+
+The LL-XS1010's `/lib/modules/4.9.308+/` directory contains `qos_tc.ko` (151904 bytes), `mod_pon_eth.ko` (81148 bytes), `gwdpa-dpm.ko` (841084 bytes), and `mod_pon_mbox.ko` (187152 bytes). Live module listing previously confirmed that `qos_tc` is used by `mod_pon_eth` and `dp_eth_reinsert`. `modinfo qos_tc` reports GPL and an empty direct `depends` list. The file is now available for private offline comparison of its imported symbol CRCs with the two modules already inspected. No module binaries or device-specific data are included.
