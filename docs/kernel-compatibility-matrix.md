@@ -100,3 +100,7 @@ Private read-only analysis of `mod_pon_eth.ko` and `gwdpa-dpm.ko` found matching
 | `dp_register_dev_ext` | `0xbe1c1e13` | `0xbe1c1e13` |
 
 Additional expected callback-pointer symbol CRCs found in `gwdpa-dpm.ko`: `dp_register_dev_ext_fn = 0xae16ac03`, `dp_alloc_port_ext_fn = 0x76f220b5`, `dp_xmit_fn = 0x7fe00d81`. These confirm agreement *between the two modules* for the shared imported interfaces, not an independently measured built-in kernel CRC, complete ABI equivalence, or identification of the vendor SDK release. No proprietary binaries, unique identifiers, or unfiltered logs are included.
+
+## Runtime module relationship check (2026-10-21)
+
+`/proc/modules` shows `mod_pon_eth` loaded; `qos_tc` loaded and used by `mod_pon_eth` and `dp_eth_reinsert`; `gwdpa_dpm` loaded and used by `mod_pon_eth` and `mod_pon_mcc`. The live module name uses underscore `gwdpa_dpm`, whereas the local ELF filename uses hyphen `gwdpa-dpm.ko`. The preceding offline comparison reported 26 shared imported symbols between PON Ethernet and GWDPA, all with matching expected CRCs and zero differences. This is shared-import consistency, not proof of the running kernel export CRCs. No module files or runtime addresses are included.
