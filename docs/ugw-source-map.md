@@ -75,3 +75,15 @@ The next meaningful comparison is no longer simply whether `dp_*` exists. It is 
 4. Keep firmware-bank, image format, chip and board differences in scope; do not flash vendor binaries from other products.
 
 This note contains only upstream source references, generic versions and sanitized symbol names.
+
+
+## Verified PRX300 build integration in current public MaxLinear tree
+
+Targeted public code search of `maxlinear/linux` branch `updk_9.1.90` also confirms:
+
+- [`drivers/net/datapath/dpm/Kconfig`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/dpm/Kconfig) explicitly depends on `PRX300_CQM || LGM_CQM` for datapath-related configuration.
+- [`drivers/net/ethernet/mxl/Kconfig`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/ethernet/mxl/Kconfig) identifies Ethernet support for GRX500/PRX300/LGM.
+- [`drivers/net/datapath/Kconfig`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/Kconfig) mentions PRX300 as an NP platform.
+- [`drivers/net/datapath/dpm/datapath_api_fn.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/dpm/datapath_api_fn.c) declares/exports `dp_xmit_fn` initialized to NULL, reinforcing the dynamic-dispatch interpretation.
+
+A search for the exact board string `prx126-sfp-pon` in the default-branch indexed files returned no matches; this is **not** a comprehensive proof the device tree is absent. The branch contains PRX300 functionality, but no verified complete LL-XS1010 platform definition.
