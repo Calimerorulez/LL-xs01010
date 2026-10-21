@@ -154,3 +154,14 @@ The firmware filename is a required dependency in the recipe, **not proof** that
 - Exact `prx126-sfp-pon.dts`: only historic build target has been verified, not complete DTS source.
 
 Follow-up: ask MaxLinear or FS.com for the corresponding GPL/source package `pon_sfp_i2c` version 1.2.1, required ACA firmware provenance, kernel compatibility, and the PRX126 board DTS. Retain device-specific contents privately.
+
+
+## Public mirrors / exact DTS search, negative result and access lead (2026-10-21)
+
+A follow-up search for `pon_sfp_i2c`, `CONFIG_PON_SFP_I2C`, and the exact file name `prx126-sfp-pon.dts` found **no verified publicly readable C driver source or exact DTS file**. The first-party MaxLinear feed recipe remains the only direct `pon_sfp_i2c` source reference found, and `maxlinear/pon_sfp_i2c` was not accessible through the GitHub repository API at the time of the check. Avoid mistaking unrelated `sfp_i2c.c` files from other hardware vendors for this driver.
+
+A potentially valuable source-access lead is the prpl Foundation's [MaxLinear platform build profile](https://gitlab.com/prpl-foundation/prplos/prplos/-/blob/a17afef7ca0ef6e21674e91284a6b096f136b9ce/profiles/mxl_x86.yml): it documents that some MaxLinear SDK and feed sources are hosted at `git.maxlinear.com` and require granted access. **That profile targets x86/LGM, not PRX126**, so it is an access/provenance lead, not a substitute for a PRX300/PRX126 SDK.
+
+The publicly indexed [`paldier/feed_target_mips` `image/prx300.mk`](https://github.com/paldier/feed_target_mips/blob/ugw-8.4.1-cleanup/image/prx300.mk) confirms `DEVICE_DTS := prx126-sfp-pon`, but searches did not locate the source `.dts`. This is evidence of a named target, not evidence that all required device-tree sources are public.
+
+**Practical next action:** request from MaxLinear or the module supplier the exact matching PRX126-SFP-PON DTS/DTSI sources, `pon_sfp_i2c` v1.2.1 source package, associated ACA firmware provenance and kernel/toolchain support matrix. Independently reconstructed DT data from the running device must be reviewed and stripped of identity/EEPROM/calibration information before any public release.
