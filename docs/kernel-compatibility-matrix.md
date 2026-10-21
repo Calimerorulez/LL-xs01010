@@ -41,3 +41,19 @@ Research date: 2026-10-21. **Source-level assessment only; no driver has been co
 3. Check whether `maxlinear/linux` contains an available PRX300 MIPS defconfig, device-tree prerequisites and cross-compilation toolchain requirements.
 4. Run separate compile-only checks for mailbox/PTP, PON Ethernet and switch components, collecting errors and fixes in a private working directory.
 5. Mark build successes distinctly from device runtime validation; no deployment until safe recovery and flash layout are fully established.
+
+## Installed device module dependency metadata (2026-10-21)
+
+A read-only `opkg list-installed | grep -Ei 'pon|sfp|datapath|qos|switch|gsw'` returned no matching package names on the live LL-XS1010. This does **not** establish the modules are absent; their running presence was previously confirmed. Package registration, image embedding or naming may explain the discrepancy.
+
+`modinfo` reports only license and direct `depends` entries for the selected modules, with no version or description lines:
+
+| Module | License | Direct `depends` |
+| --- | --- | --- |
+| `mod_pon_eth` | GPL | `mod_pon_mbox,qos_tc,gwdpa-dpm` |
+| `mod_pon_mbox` | Dual BSD/GPL | `i2c-core` |
+| `mod_pon_ptp` | GPL | `mod_pon_mbox` |
+| `mod_sfp_i2c` | GPL | none listed |
+| `gwdpa-dpm` | GPL | none listed |
+
+Direct dependencies are not a complete functional or runtime dependency graph. These commands did not reveal specific installed driver or MaxLinear SDK release versions. Next consider **only non-sensitive** build metadata (module `srcversion`/`.modinfo` if present, public package recipe correspondence), without dumping EEPROM, firmware blobs, PON identity or unredacted build-path credentials.
