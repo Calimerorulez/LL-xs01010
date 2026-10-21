@@ -210,3 +210,13 @@ The running LL-XS1010's read-only `/sys/bus/platform/devices/*/driver` inspectio
 This adds two **MACsec/EIP160** platformdevices to the driver inventory. Driver symlinks establish successful binding, but are not end-to-end proof of optical link function, packet flow, MACsec usage or a compatible newer-kernel implementation.
 
 Safe next inspection: check the publicly available MaxLinear kernel source for exact `intel,gsw_macsec`, `intel,gsw_core` and `intel,gsw_mac` bindings; then review the matching module ownership without dumping sensitive configuration.
+
+## Exact switch and MACsec source matches in MaxLinear Linux 5.15 (2026-10-21)
+
+GitHub source search in official `maxlinear/linux` branch `updk_9.1.90` found the three newly observed compatible strings:
+
+- `intel,gsw_macsec`: [`drivers/net/datapath/gswip/mac/src/macsec_drv.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/gswip/mac/src/macsec_drv.c)
+- `intel,gsw_core`: [`drivers/net/datapath/gswip/gswip_dev/gsw_dev.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/gswip/gswip_dev/gsw_dev.c)
+- `intel,gsw_mac`: [`drivers/net/datapath/gswip/mac/src/mac_drv.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/gswip/mac/src/mac_drv.c)
+
+These are exact matching source-level device-tree strings and driver candidates, not evidence of a successful driver port or binary ABI compatibility. The running LL-XS1010 has two bound `gsw_macsec` instances and three bound `gsw_mac` instances; whether those features are actively used has not been established.
