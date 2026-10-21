@@ -75,3 +75,9 @@ On the Debian build host, inspection of `paldier/linux` branch `intel-4.9.206` r
 The inspected device-tree directory under `arch/mips/boot/dts/lantiq` contains generic XRX500 and older Lantiq board trees but no filename matching `prx126-sfp-pon`. Its [Makefile](https://github.com/paldier/linux/blob/intel-4.9.206/arch/mips/boot/dts/lantiq/Makefile) lists only `easy50712.dtb`, `easy350_anywan.dtb`, and `easy350550_bootcore.dtb` as conditional DTB targets. Thus this historical kernel source is a partial platform reference; the exact PRX126 SFP device tree is not established there.
 
 Next verify whether a separate UGW `feed_target_mips` or patches adds the PRX126 board DTS at image-build time, and audit the full historical Kconfig dependency chain before cross-compiling. These findings are based on read-only local source inspection and public repository source; no live device changes or proprietary material were used.
+
+## UGW target feed checkout verified (2026-10-21)
+
+On the Debian research host, `paldier/feed_target_mips` branch `ugw-8.4.1-cleanup` was checked for filenames containing PRX126, PRX300 or SFP-PON. The only matching files were `image/prx300.mk` and `image/fakeroot-prx300.conf`. Recursive content search located `DEVICE_DTS := prx126-sfp-eva-pon` at `image/prx300.mk:91` and `DEVICE_DTS := prx126-sfp-pon` at `image/prx300.mk:106`. **No matching DTS source was found in this target-feed checkout.** This indicates the feed contains image build targets but does not itself supply the required board tree. Whether a separate kernel patch set or another vendor source repository provides the DTS remains open.
+
+Next trace the UGW build include chain to determine the expected location of `DEVICE_DTS` source and inspect the available kernel patch series for DTS additions. Keep any reconstructed live DTB private.
