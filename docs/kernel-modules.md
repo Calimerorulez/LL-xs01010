@@ -80,3 +80,9 @@ A follow-up read-only test established:
 - Confirmed module paths include `mod_pon_eth.ko`, `mod_pon_mbox.ko`, `qos_tc.ko`. Vendor datapath module filename is `gwdpa-dpm.ko`, not `gwdpa_dpm.ko`.
 - Attempt to read `/proc/config.gz` using `zcat` and grep yielded no output; the pipeline suppressed errors. It is not known whether the config file was present. `CONFIG_MODVERSIONS` remains unknown.
 - Next recommended action: copy selected modules **privately** to an analysis machine and use a full host `readelf` to inspect `.modinfo`, `__versions`, ELF headers and undefined symbols. Do not commit binaries or unredacted extracts to public GitHub.
+
+## Undefined-symbol sample from offline mod_pon_eth.ko inspection (2026-10-21)
+
+The first 50 alphabetically sorted undefined ELF symbol names were inspected locally with GNU readelf. Notable vendor datapath API references include `dp_alloc_port_ext`, `dp_register_dev_ext`, `dp_register_subif_ext`, `dp_get_netif_subifid`, `dp_rx_enable`, `dp_xmit`, `dp_set_pmapper`, and `dp_pmac_set`. Other references include `gem_port_id_remove_update`, `gem_port_id_write_update`, `gsw_get_swcore_ops`, and standard Linux netdevice/ethtool symbols.
+
+This is **only a sample**, not a complete dependency inventory. Undefined symbols may be provided by the main kernel or other modules. Export ownership and CRC compatibility have not been established. The vendor-specific datapath API is a key obstacle to assuming drop-in compatibility with an upstream newer kernel. No binaries or device identifiers were published.
