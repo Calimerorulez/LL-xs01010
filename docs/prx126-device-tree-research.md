@@ -126,3 +126,31 @@ This substantially revises the prior 'no matching source found' status: **public
 For `intel,pon-sfp-i2c`, exact compatible strings also occur in older third-party Intel target DTS files, e.g. [`paldier/feed_target_mips/dts/EASY98020V18-PONIP.dts`](https://github.com/paldier/feed_target_mips/blob/ugw-8.4.1-cleanup/dts/EASY98020V18-PONIP.dts). These are historical boards (some explicitly simulated) and **are not** the LL-XS1010's final SFP-I2C driver source.
 
 Next: inspect the `maxlinear/pon_mbox_drv` source for precise compatible strings, version and kernel requirements, then locate `mod_sfp_i2c` source and test feasibility by building in a separate offline environment. Never flash or alter production device.
+
+
+## Official SFP I2C package recipe found (2026-10-21)
+
+Public MaxLinear [`feed_pon/pon-sfp-i2c/Makefile`](https://github.com/maxlinear/feed_pon/blob/updk_9.1.80/pon-sfp-i2c/Makefile) identifies the package and its source relationship:
+
+| Field | Value from recipe |
+| --- | --- |
+| OpenWrt package | `pon-sfp-i2c` |
+| Package version | `1.2.1` |
+| Upstream Git source | `maxlinear/pon_sfp_i2c` |
+| Kernel module output | `src/mod_sfp_i2c.ko` |
+| Firmware filename | `prx_i2c_aca_fw.bin` |
+| Firmware package version | `v1.0.2.1.24` |
+| License stated in recipe | `GPL-2.0-only or BSD-2-Clause` |
+
+The recipe uses an SSH Git source URL and describes the component as a **PON SFP I2C emulation driver**. A metadata lookup for the exact `maxlinear/pon_sfp_i2c` repository returned GitHub 404; thus **its full source code has not been verified publicly accessible**. A 404 is not conclusive evidence about whether a private repo exists. A public repository search by that project name returned no matches.
+
+The firmware filename is a required dependency in the recipe, **not proof** that this exact firmware version is installed on the observed LL-XS1010. No firmware binaries, EEPROM data or images have been collected or published.
+
+## Current source availability assessment
+
+- Datapath wrapper and PRX300 drivers: publicly available in `maxlinear/linux` (Linux 5.15.180 branch), subject to ABI adaptation.
+- PON Ethernet, mailbox and timing: first-party source candidates publicly available in `maxlinear/pon_mbox_drv`; need revision and build-compatibility checks.
+- PON SFP I2C: public package recipe establishes precise source name and ACA firmware dependency; **matching C source not found/publicly accessible yet**.
+- Exact `prx126-sfp-pon.dts`: only historic build target has been verified, not complete DTS source.
+
+Follow-up: ask MaxLinear or FS.com for the corresponding GPL/source package `pon_sfp_i2c` version 1.2.1, required ACA firmware provenance, kernel compatibility, and the PRX126 board DTS. Retain device-specific contents privately.
