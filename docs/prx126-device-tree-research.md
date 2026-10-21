@@ -105,3 +105,24 @@ Targeted searches in the same public branch returned **no indexed matches** for 
 `status` not specified on `gswitch` is consistent with standard DT semantics (normally available unless disabled); it is not an explicit `okay` result. Conversely, `wan_xpcs` is explicitly disabled and must not be treated as the currently active optical path merely because the node exists.
 
 **Next safe step:** read only the non-secret `compatible` and `status` properties on subnodes under `gswitch`, `pon_ethernet`, `sfp_i2c` and selected pinctrl groups; map exact strings to sources. Never read EEPROM cell payloads, calibration or identity fields.
+
+
+## Driver registrations and first-party PON source discovery (2026-10-21)
+
+A read-only `/sys/module/*/drivers` listing on the LL-XS1010 confirms these registrations:
+
+- `mod_pon_eth`: `platform:prx300-pon`.
+- `mod_pon_mbox`: `platform:pon-pinselect`, `platform:pon_mbox`, `spi:pon_mbox`.
+- `mod_sfp_i2c`: `platform:pon-sfp-i2c`.
+
+**Critical new source lead:** official public MaxLinear repository [`maxlinear/pon_mbox_drv`](https://github.com/maxlinear/pon_mbox_drv), default branch `master`:
+
+- [`eth/pon_eth.c`](https://github.com/maxlinear/pon_mbox_drv/blob/master/eth/pon_eth.c) contains a device-tree match table referencing `intel,prx300-pon`.
+- [`src/drv_pon_mbox.c`](https://github.com/maxlinear/pon_mbox_drv/blob/master/src/drv_pon_mbox.c) contains the PON mailbox implementation, `pon_mbox` match entries, and PON pinselect compatible strings.
+- [`ptp/pon_ptp.c`](https://github.com/maxlinear/pon_mbox_drv/blob/master/ptp/pon_ptp.c) contains PON timing device-tree matches, including `intel,prx300-pon-ptp`.
+
+This substantially revises the prior 'no matching source found' status: **public first-party source has been located for PON Ethernet, mailbox, and PTP candidates.** Exact revision/ABI compatibility with the running `4.9.308+` modules has not been tested. The SPI interface may be part of the same module's registration but needs detailed source inspection.
+
+For `intel,pon-sfp-i2c`, exact compatible strings also occur in older third-party Intel target DTS files, e.g. [`paldier/feed_target_mips/dts/EASY98020V18-PONIP.dts`](https://github.com/paldier/feed_target_mips/blob/ugw-8.4.1-cleanup/dts/EASY98020V18-PONIP.dts). These are historical boards (some explicitly simulated) and **are not** the LL-XS1010's final SFP-I2C driver source.
+
+Next: inspect the `maxlinear/pon_mbox_drv` source for precise compatible strings, version and kernel requirements, then locate `mod_sfp_i2c` source and test feasibility by building in a separate offline environment. Never flash or alter production device.
