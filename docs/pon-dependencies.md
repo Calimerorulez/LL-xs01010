@@ -60,3 +60,20 @@ Notable compatibility constraints:
 - `ldd` resolution on the original system does **not** establish compatibility with newer userspace or kernel.
 
 Runtime load addresses and other device-specific context have been excluded.
+
+
+## Second-level shared library linkage (2026-10-21)
+
+Observed by running `ldd` on the LL-XS1010:
+
+| Library | Symlink target | Direct runtime library dependencies |
+| --- | --- | --- |
+| `/usr/lib/libadapter.so.0` | `libadapter.so.0.0.0` | `libgcc_s.so.1`, musl libc |
+| `/usr/lib/libifxos.so.0` | `libifxos.so.0.0.0` | `libgcc_s.so.1`, musl libc |
+| `/usr/lib/libcli.so.1` | `libcli.so.1.0.0` | `libifxos.so.0`, `libgcc_s.so.1`, musl libc |
+
+`ldd` displays `ldd` itself as the loader alias for these shared objects; this is an observed display detail, not proof that the libraries are statically linked.
+
+There are no additional **direct shared-object** dependencies visible in these three results. This does not rule out direct kernel calls, ioctl/sysfs/netlink interactions, runtime dynamic loading, or version-specific vendor ABI dependencies.
+
+Next: collect read-only module metadata (`modinfo` where available, `/sys/module` metadata) and investigate runtime interface requirements. Do not copy private firmware binaries to this public repository.
