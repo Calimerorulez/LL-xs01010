@@ -56,3 +56,9 @@ References:
 - https://www.right.com.cn/forum/thread-8423574-1-1.html
 
 Next research priority: obtain original FS/MaxLinear PRX126 image or GPL source package, or verifiable kernel `uname` output from a 22.03.3 PRX126 owner. The known `PTXG_CX_V0.03` 8311 Basic uImage remains the only verified local firmware baseline for this exact board. No firmware flashing is planned.
+
+## Comparison of historical PRX300 and public Linux 5.15 Kconfig
+
+Read-only Debian searches confirmed `SOC_GRX500`, `SOC_PRX300_BOOTCORE` and `PRX300_CQM` declarations in historical Intel Linux 4.9 source. The public MaxLinear 5.15.180 checkout's `drivers/net/datapath/cqm/Kconfig` declares `MXL_CBM` and only offers `LGM_CQM` in its SoC selection. However, its datapath DPM Kconfig still refers to `PRX300_CQM` in `DPM_DATAPATH_PARTIAL_FEEDS` and `DPM_DATAPATH_HAL_GSWIP31` dependencies. These references alone do not provide an enabled PRX300 backend; the necessary configuration definition was not found in the searched modern tree. This points to an incomplete PRX300 platform integration in the published 5.15 checkout, not proof that no newer proprietary branch exists.
+
+Verified source paths: `paldier/linux/drivers/net/ethernet/lantiq/cqm/Kconfig` on `intel-4.9.206`, `maxlinear/linux/drivers/net/datapath/cqm/Kconfig` and `drivers/net/datapath/dpm/Kconfig`. Next seek an intermediate UGW / PRX300-capable kernel tree before attempting an unsupported cross-version port.
