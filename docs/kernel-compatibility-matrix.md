@@ -120,3 +120,29 @@ Offline comparison of the module-version symbol records in three locally retaine
 | `gwdpa-dpm.ko` / `qos_tc.ko` | 45 | 45 | 0 |
 
 Fifteen imported symbol names occur in all three modules. The 91 pairwise matches must not be interpreted as 91 distinct symbols. All shared imported symbols examined have consistent expected CRCs across the modules. This does not independently verify the running kernel's exported CRCs or establish Linux 5.15 compatibility. No binary modules or device-specific identifying data were committed.
+
+## Six-module shared imported-symbol ABI consistency (2026-10-22)
+
+An offline read-only comparison of `.ko` files from the original Linux 4.9.308+ image examined the ELF `__versions` records of six modules. Counts: `mod_pon_eth.ko` 88, `gwdpa-dpm.ko` 196, `qos_tc.ko` 73, `mod_pon_mbox.ko` 117, `mod_pon_mcc.ko` 31, and `dp_eth_reinsert.ko` 24. This is 529 module-local imported-symbol records, representing 378 distinct imported symbol names across all six modules.
+
+All 15 possible pairs were compared for identically named imported symbols. Counts of shared symbols, all with matching expected CRCs:
+
+| Pair | Matches | Mismatches |
+| --- | ---: | ---: |
+| PON Ethernet / GWDPA DPM | 26 | 0 |
+| PON Ethernet / QoS TC | 20 | 0 |
+| PON Ethernet / PON mailbox | 15 | 0 |
+| PON Ethernet / PON MCC | 17 | 0 |
+| PON Ethernet / Ethernet reinsert | 18 | 0 |
+| GWDPA DPM / QoS TC | 45 | 0 |
+| GWDPA DPM / PON mailbox | 16 | 0 |
+| GWDPA DPM / PON MCC | 20 | 0 |
+| GWDPA DPM / Ethernet reinsert | 10 | 0 |
+| QoS TC / PON mailbox | 13 | 0 |
+| QoS TC / PON MCC | 21 | 0 |
+| QoS TC / Ethernet reinsert | 10 | 0 |
+| PON mailbox / PON MCC | 18 | 0 |
+| PON mailbox / Ethernet reinsert | 7 | 0 |
+| PON MCC / Ethernet reinsert | 8 | 0 |
+
+**Result: 264 of 264 pairwise shared-import comparisons have equal expected CRCs; zero mismatches.** The 264 are comparisons rather than distinct symbol names. This supports a consistent common kernel ABI expectation across the six original modules. It does not independently establish matching CRCs exported by the live kernel, full driver compatibility, or compatibility with Linux 5.15. All original module binaries remain private.
