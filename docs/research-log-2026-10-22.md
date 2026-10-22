@@ -34,3 +34,11 @@ Sources:
 - https://resource.fs.com/mall/resource/xgs-sfp-ont-mac-i-configuration-guide-20260114141439.pdf
 
 Next evidence required: actual `uname -r`, `uname -v`, `cat /etc/openwrt_release`, and (if permissible) the firmware image or kernel header from this specific FS model. Do not flash an unknown manufacturer's image on the LL-XS1010. The older Potrontec kernel and its byte-identical boot FDT remain the verified baseline.
+
+## FS XGS-SFP-ONT-MAC-I 22.03.3 firmware acquisition search
+
+Public web searches for an original downloadable `v22.03.3_maxlinear` image for FS XGS-SFP-ONT-MAC-I (PRX126; field report SKU 378865) found **no verifiable direct firmware archive or mirror**. The documented FS upgrade interface accepts user-supplied firmware files, but the existence of an upload interface is not evidence of a public download. FS.com Q&A quoted in third-party community reports says its XGS-PON ONU stick is not intended for post-shipping firmware updates and that community 8311 firmware is not compatible; this should be confirmed with support for the exact product/SKU and firmware revision. Other products labelled `XGS-ONU-25-20NI` or FS GPON sticks may use different hardware and must not be used as firmware substitutes.
+
+Best next route: request the exact firmware package and its build/kernel version, release notes and compatibility details from FS.com support, referring to `XGS-SFP-ONT-MAC-I`, the specific SKU and installed `v22.03.3_maxlinear` (LEDE 1.23.1). Alternatively contact the author of the public July 2026 PRX126 field report to request non-sensitive `uname -a` output and the source of the firmware package. Do not flash any unverified image on the LL-XS1010.
+
+Sources: https://gist.github.com/arapov/a2019f5dac903864f36102184ff2755a ; https://resource.fs.com/mall/resource/xgs-sfp-ont-mac-i-configuration-guide-20260114141439.pdf ; https://community.odido.nl/thuisnetwerk-566/tragere-uploadsnelheid-na-eigen-ont-sfp-registratie-382970
