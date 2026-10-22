@@ -220,3 +220,9 @@ GitHub source search in official `maxlinear/linux` branch `updk_9.1.90` found th
 - `intel,gsw_mac`: [`drivers/net/datapath/gswip/mac/src/mac_drv.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/gswip/mac/src/mac_drv.c)
 
 These are exact matching source-level device-tree strings and driver candidates, not evidence of a successful driver port or binary ABI compatibility. The running LL-XS1010 has two bound `gsw_macsec` instances and three bound `gsw_mac` instances; whether those features are actively used has not been established.
+
+## Original boot FDT recovered and decompiled (2026-10-22)
+
+The running LL-XS1010 exposes a 32647-byte FDT at `/sys/firmware/fdt`; its header begins with DTB magic `d00dfeed` and declares the same total size. The binary was transferred privately to the iMac and decompiled with `dtc` into a 1662-line DTS; `dtc` emitted 24 warning lines, not yet individually classified. **The DTB and full DTS are private and must not be uploaded or committed.** The root compatible string includes `intel,prx126-sfp-pon`, `intel,prx126-sfp-eva-pon`, `intel,prx126`, `intel,prx300`. Selected generic device compatibles include `intel,prx300-pon-mbox`, `intel,prx300-pon`, `intel,prx300-pon-ptp`, `intel,prx300-cqm`, `lantiq,prx300-eth`, `lantiq,spinand`, and `intel,prx300-pcie`. These identify the actual boot-time hardware description; a decompiled DTB lacks original DTS include hierarchy, labels, and comments and may contain private board or factory properties.
+
+Next: classify warnings locally; verify disabled/enabled duplicate peripherals and match `compatible` strings against candidate MaxLinear kernel drivers. A successful compile roundtrip proves syntax, not bootability on other kernel versions. Avoid publishing unfiltered DTS, bootargs, serial or calibration values.
