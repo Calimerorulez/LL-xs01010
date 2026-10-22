@@ -87,3 +87,11 @@ Targeted public code search of `maxlinear/linux` branch `updk_9.1.90` also confi
 - [`drivers/net/datapath/dpm/datapath_api_fn.c`](https://github.com/maxlinear/linux/blob/updk_9.1.90/drivers/net/datapath/dpm/datapath_api_fn.c) declares/exports `dp_xmit_fn` initialized to NULL, reinforcing the dynamic-dispatch interpretation.
 
 A search for the exact board string `prx126-sfp-pon` in the default-branch indexed files returned no matches; this is **not** a comprehensive proof the device tree is absent. The branch contains PRX300 functionality, but no verified complete LL-XS1010 platform definition.
+
+## 8311 builder kernel provenance (2026-10-22)
+
+Audited upstream `djGrrr/8311-was-110-firmware-builder` scripts (`build.sh`, `extract.sh`, `mods/binary-mods.sh`) and its v2.8.0 release notes. The builder requires two vendor firmware inputs: an Azores/BFW local-upgrade `.img`, from which `extract.sh` extracts `bootcore.bin`, `kernel.bin`, and `rootfs.img`, and a separate Potrontec/basic image directory already containing the same three artifacts. The `-k`/`-K` selection chooses which supplied kernel image to carry into the output; `build.sh` copies that `kernel.bin` and repackages images. It does not compile Linux or produce a DTS. `mods/binary-mods.sh` modifies selected user-space PON/OMCI binaries, not the compiled kernel. The 8311 v2.8.0 release states that its basic base was updated to Potrontec `PTXG_CX_V0.03`. This identifies the immediate binary provenance but not a public source SDK or source DTS.
+
+Source: https://github.com/djGrrr/8311-was-110-firmware-builder/blob/master/build.sh ; https://github.com/djGrrr/8311-was-110-firmware-builder/blob/master/extract.sh ; https://github.com/djGrrr/8311-was-110-firmware-builder/releases/tag/v2.8.0
+
+An indexed code search for literal `intel,prx126-sfp-pon` yielded no source DTS; the historical `paldier/feed_target_mips/image/prx300.mk` instead specifies `DEVICE_DTS := prx126-sfp-pon` as a target name without including the matching source DTS in the checked-out tree. Exact DTS source remains unlocated. The live device-tree can furnish an effective DTB for a private sanitized decompilation, but that is not identical to locating the original editable vendor DTS source and could expose unique calibration/identity data if published unfiltered.
