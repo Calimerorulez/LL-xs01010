@@ -42,3 +42,17 @@ Public web searches for an original downloadable `v22.03.3_maxlinear` image for 
 Best next route: request the exact firmware package and its build/kernel version, release notes and compatibility details from FS.com support, referring to `XGS-SFP-ONT-MAC-I`, the specific SKU and installed `v22.03.3_maxlinear` (LEDE 1.23.1). Alternatively contact the author of the public July 2026 PRX126 field report to request non-sensitive `uname -a` output and the source of the firmware package. Do not flash any unverified image on the LL-XS1010.
 
 Sources: https://gist.github.com/arapov/a2019f5dac903864f36102184ff2755a ; https://resource.fs.com/mall/resource/xgs-sfp-ont-mac-i-configuration-guide-20260114141439.pdf ; https://community.odido.nl/thuisnetwerk-566/tragere-uploadsnelheid-na-eigen-ont-sfp-registratie-382970
+
+## Broader MaxLinear firmware discovery (2026-10-22)
+
+Search expanded beyond the FS branded stick to public MaxLinear PRX126/PRX300 firmware images, MaxLinear UGW download locations, GitHub/GitLab firmware mirrors, and prplOS release artifacts.
+
+**Findings:** (1) No verified direct downloadable `v22.03.3_maxlinear` firmware archive for the PRX126 FS XGS-SFP-ONT-MAC-I, or a matching generic PRX126 MaxLinear release, was located in the searched public sources. (2) prpl Foundation release pipelines do publish MaxLinear/Gemtek OSPv2 images, but these target **intel_x86/lgm** equipment, not the MIPS PRX126 SFP stick; such images are not substitutes. (3) The prplOS MaxLinear SDK profile explicitly says that its source feeds require access to `git.maxlinear.com`; the published profile targets x86 URX, not PRX126. (4) The public 8311-related PRX126 firmware builds (including Chinese community variants) are independent community image repacks, not verified MaxLinear 22.03.3 originals. (5) Official MaxLinear public documentation search did not turn up a PRX126 system image download; the vendor has a support portal for requesting technical material.
+
+References:
+- https://gitlab.com/prpl-foundation/prplos/prplos/-/blob/mainline-23.05/.gitlab/release.yml
+- https://gitlab.com/prpl-foundation/prplos/prplos/-/blob/a17afef7ca0ef6e21674e91284a6b096f136b9ce/profiles/mxl_x86.yml
+- https://maxlinear-support.microsoftcrmportals.com/
+- https://www.right.com.cn/forum/thread-8423574-1-1.html
+
+Next research priority: obtain original FS/MaxLinear PRX126 image or GPL source package, or verifiable kernel `uname` output from a 22.03.3 PRX126 owner. The known `PTXG_CX_V0.03` 8311 Basic uImage remains the only verified local firmware baseline for this exact board. No firmware flashing is planned.
