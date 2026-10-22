@@ -230,3 +230,11 @@ Next: classify warnings locally; verify disabled/enabled duplicate peripherals a
 ## Decompiled DTS roundtrip validation (2026-10-22)
 
 The private 1662-line recovered PRX126 DTS successfully compiled back into a DTB with `dtc -I dts -O dtb`; it has **not** been booted or flashed. The original DTB-to-DTS operation produced 24 warning lines with types: `unit_address_vs_reg` (8), `reg_format` (4), `unique_unit_address` (3), and nine other individual reports spanning PCI, SPI, I2C, interrupts and address properties. The reverse DTS-to-DTB invocation produced 114 **diagnostic lines**, not yet classified as 114 separate warnings. Recompilation alone does not establish byte-for-byte equivalence to the boot FDT or suitability for another kernel. Original and regenerated binaries remain private.
+
+## Scoped driver compatible search (2026-10-22)
+
+On the `maxlinear-linux` checkout (Linux 5.15.180), a filename-filtered recursive search for selected existing boot-DTB `compatible` strings found `intel,gswdev` in GSWIP source and `intel,gsw_mac` in GSWIP source. The same checkout search returned no literal hits for `intel,prx300-pon`, `intel,prx300-pon-mbox`, `intel,prx300-cqm`, `lantiq,prx300-eth`, or `intel,prx300-pcie`. This only documents search scope; absence from this kernel checkout does not imply absence from external driver repositories.
+
+Cross-repository source checks found: `intel,prx300-pon-mbox` in public `maxlinear/pon_mbox_drv/src/drv_pon_mbox.c`; `intel,prx300-cqm` in `paldier/linux/drivers/net/ethernet/lantiq/cqm/prx300/cqm.c`; `lantiq,prx300-eth` in `paldier/linux/drivers/net/ethernet/lantiq/ltq_eth_drv_xrx500.c`; and `intel,prx300-pcie` in `paldier/linux/drivers/pci/host/pcie-intel.c`. **These public source locations belong to different trees/versions and have not been demonstrated to build together for Linux 5.15**.
+
+Additionally `paldier/feed_target_mips` has a `dts/` directory with historical PON boards such as `EASY98020-PONIP.dts`, `EASY98020V18-PONIP.dts`, and `EASY98000NOR-PONIP.dts`, but search still did not identify the specific `prx126-sfp-pon.dts`. Investigate the full DTS directory and other target SDK source trees before inferring that the matching original DTS is available.
